@@ -26,7 +26,38 @@
  * ```
  */
 
-import './index.css';
+import "./index.css";
 import * as React from "./Index.bs";
 
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
+var app = require("electron").remote;
+var dialog = app.dialog;
+var fs = require("fs");
+
+export function openOrderCSVFile(setState) {
+  const filepaths = dialog.showOpenDialogSync({
+    properties: ["openFile"],
+  });
+
+  console.log(filepaths);
+
+  if (!filepaths && filepaths.length == 0) {
+    console.log("No file selected");
+    return;
+  }
+
+  const filepath = filepaths[0];
+
+  fs.readFile(filepath, "utf-8", (err, data) => {
+    if (err) {
+      alert("An error ocurred reading the file :" + err.message);
+      return;
+    }
+
+    console.log(data);
+    setState(data);
+  });
+}
+
+console.log(
+  '👋 This message is being logged by "renderer.js", included via webpack'
+);
