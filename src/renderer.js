@@ -27,6 +27,6 @@
  */
 
 import './index.css';
-import * as React from "./myScript";
+import * as React from "./Index.bs";
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');

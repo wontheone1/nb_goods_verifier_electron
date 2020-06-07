@@ -87,3 +87,17 @@ typings/
 
 # Electron-Forge
 out/
+
+.DS_Store
+.merlin
+.bsb.lock
+npm-debug.log
+/lib/bs/
+/node_modules/
+/bundleOutput/
+*.bs.js
+firebase-debug.log
+.firebase/**.cache
+
+# idea
+.idea/
