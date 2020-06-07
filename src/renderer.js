@@ -32,6 +32,7 @@ import * as React from "./Index.bs";
 var app = require("electron").remote;
 var dialog = app.dialog;
 var fs = require("fs");
+const parse = require("csv-parse/lib/sync");
 
 export function openOrderCSVFile(setState) {
   const filepaths = dialog.showOpenDialogSync({
@@ -53,8 +54,11 @@ export function openOrderCSVFile(setState) {
       return;
     }
 
-    console.log(data);
-    setState(data);
+    const records = parse(data, {
+      bom: true,
+    });
+    console.log(records);
+    setState(records);
   });
 }
 
