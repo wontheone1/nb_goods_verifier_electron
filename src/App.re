@@ -5,26 +5,22 @@ type column = array(string);
 type csvFileContent = array(column);
 
 [@bs.module "./renderer"]
-external openOrderCSVFile:
-  ((csvFileContent, int, column, column) => unit) => unit =
+external openOrderCSVFile: ((csvFileContent, column, column) => unit) => unit =
   "openOrderCSVFile";
 
 type state = {
   csvFileContent,
-  optionManagementCodeIndex: int,
   optionManagementCodeColumn: column,
   orderArticleQtyColumn: column,
 };
 
 type action =
   | SetCSVFileContent(csvFileContent)
-  | SetOptionManagementCodeIndex(int)
   | SetOptionManagementCodeColumn(column)
   | SetOrderArticleQtyColumn(column);
 
 let initialState = {
   csvFileContent: [|[|"", ""|]|],
-  optionManagementCodeIndex: (-1),
   optionManagementCodeColumn: [||],
   orderArticleQtyColumn: [||],
 };
@@ -33,10 +29,6 @@ let reducer: (state, action) => state =
   (state, action) => {
     switch (action) {
     | SetCSVFileContent(csvFileContent) => {...state, csvFileContent}
-    | SetOptionManagementCodeIndex(optionManagementCodeIndex) => {
-        ...state,
-        optionManagementCodeIndex,
-      }
     | SetOptionManagementCodeColumn(optionManagementCodeColumn) => {
         ...state,
         optionManagementCodeColumn,
@@ -55,7 +47,6 @@ let make = () => {
   React.useEffect1(
     () => {
       Js.log(state.csvFileContent);
-      Js.log(state.optionManagementCodeIndex);
       Js.log(state.optionManagementCodeColumn);
       Js.log(state.orderArticleQtyColumn);
       None;
@@ -70,14 +61,8 @@ let make = () => {
     <button
       onClick={_ =>
         openOrderCSVFile(
-          (
-            csvFileContent,
-            optionManagementCodeIndex,
-            optionManagementCodeColumn,
-            orderArticleQtyColumn,
-          ) => {
+          (csvFileContent, optionManagementCodeColumn, orderArticleQtyColumn) => {
           dispatch(SetCSVFileContent(csvFileContent));
-          dispatch(SetOptionManagementCodeIndex(optionManagementCodeIndex));
           dispatch(
             SetOptionManagementCodeColumn(optionManagementCodeColumn),
           );

@@ -67,7 +67,6 @@ export function openOrderCSVFile(setState) {
   );
   setState(
     array.take(records, 10),
-    optionManagementCodeIndex,
     records.map((record) => record[optionManagementCodeIndex]),
     records.map((record) => record[orderArticleQtyIndex])
   );
