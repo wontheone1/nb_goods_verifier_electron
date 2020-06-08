@@ -4,32 +4,46 @@ external dialog: unit => unit = "dialog";
 type column = array(string);
 type csvFileContent = array(column);
 
-[@bs.module "./renderer"]
-external openOrderCSVFile:
-  ((csvFileContent, column, column, column) => unit) => unit =
-  "openOrderCSVFile";
-
-[@bs.module "./renderer"]
-external openEcountExcelFile: unit => unit = "openEcountExcelFile";
+type ecountData = {
+  articleCodeColumn: column,
+  eaColumn: column,
+  totalColumn: column,
+};
 
 type state = {
   csvFileContent,
   optionManagementCodeColumn: column,
   orderArticleQtyColumn: column,
   orderArticlePayAmountIndexColumn: column,
+  ecountData,
 };
+
+[@bs.module "./renderer"]
+external openOrderCSVFile:
+  ((csvFileContent, column, column, column) => unit) => unit =
+  "openOrderCSVFile";
+
+[@bs.module "./renderer"]
+external openEcountExcelFile: (ecountData => unit) => unit =
+  "openEcountExcelFile";
 
 type action =
   | SetCSVFileContent(csvFileContent)
   | SetOptionManagementCodeColumn(column)
   | SetOrderArticleQtyColumn(column)
-  | SetOrderArticlePayAmountIndexColumn(column);
+  | SetOrderArticlePayAmountIndexColumn(column)
+  | SetEcountData(ecountData);
 
 let initialState = {
   csvFileContent: [|[|"", ""|]|],
   optionManagementCodeColumn: [||],
   orderArticleQtyColumn: [||],
   orderArticlePayAmountIndexColumn: [||],
+  ecountData: {
+    articleCodeColumn: [||],
+    eaColumn: [||],
+    totalColumn: [||],
+  },
 };
 
 let reducer: (state, action) => state =
@@ -48,6 +62,7 @@ let reducer: (state, action) => state =
         ...state,
         orderArticlePayAmountIndexColumn,
       }
+    | SetEcountData(ecountData) => {...state, ecountData}
     };
   };
 
@@ -64,6 +79,14 @@ let make = () => {
       None;
     },
     [|state.optionManagementCodeColumn|],
+  );
+
+  React.useEffect1(
+    () => {
+      Js.log(state.ecountData);
+      None;
+    },
+    [|state.ecountData|],
   );
 
   <div>
@@ -93,7 +116,12 @@ let make = () => {
       }>
       {j|쇼핑몰 주문 csv 파일 선택|j}->React.string
     </button>
-    <button onClick={_ => openEcountExcelFile()}>
+    <button
+      onClick={_ =>
+        openEcountExcelFile(ecountData =>
+          dispatch(SetEcountData(ecountData))
+        )
+      }>
       {j|이카운트 주문입력 xlsx 파일 선택|j}->React.string
     </button>
   </div>;

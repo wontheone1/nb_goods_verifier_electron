@@ -79,7 +79,7 @@ export function openOrderCSVFile(setState) {
   );
 }
 
-export function openEcountExcelFile(setState) {
+export function openEcountExcelFile(setEcountData) {
   const filepaths = dialog.showOpenDialogSync({
     properties: ["openFile"],
   });
@@ -90,12 +90,20 @@ export function openEcountExcelFile(setState) {
   }
   const filepath = filepaths[0];
   const workbook = XLSX.readFile(filepath);
-  console.log(workbook);
   const currentSalesReport = XLSX.utils.sheet_to_json(
     workbook.Sheets.판매현황,
     { range: 1 }
   );
-  console.log(currentSalesReport);
+
+  const articleCodeColumn = currentSalesReport.map((record) => record.품목코드);
+  const eaColumn = currentSalesReport.map((record) => record.EA);
+  const totalColumn = currentSalesReport.map((record) => record.합계);
+
+  setEcountData({
+    articleCodeColumn,
+    eaColumn,
+    totalColumn,
+  });
 }
 
 console.log(
