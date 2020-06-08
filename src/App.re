@@ -1,8 +1,8 @@
 [@bs.module "electron"] [@bs.scope "remote"]
 external dialog: unit => unit = "dialog";
 
-type csvFileContent = array(array(string));
 type column = array(string);
+type csvFileContent = array(column);
 
 [@bs.module "./renderer"]
 external openOrderCSVFile: ((csvFileContent, int, column) => unit) => unit =
@@ -11,7 +11,7 @@ external openOrderCSVFile: ((csvFileContent, int, column) => unit) => unit =
 type state = {
   csvFileContent,
   optionManagementCodeIndex: int,
-  optionManagementCodeColumn: array(string),
+  optionManagementCodeColumn: column,
 };
 
 type action =
