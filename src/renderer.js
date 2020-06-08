@@ -36,6 +36,7 @@ const parse = require("csv-parse/lib/sync");
 const iconv = require("iconv-lite");
 var _ = require("lodash/core");
 const array = require("lodash/array");
+const XLSX = require("xlsx");
 
 export function openOrderCSVFile(setState) {
   const filepaths = dialog.showOpenDialogSync({
@@ -76,6 +77,20 @@ export function openOrderCSVFile(setState) {
     records.map((record) => record[orderArticleQtyIndex]),
     records.map((record) => record[orderArticlePayAmountIndex])
   );
+}
+
+export function openEcountExcelFile(setState) {
+  const filepaths = dialog.showOpenDialogSync({
+    properties: ["openFile"],
+  });
+
+  if (!filepaths || filepaths.length == 0) {
+    console.log("No file selected");
+    return;
+  }
+  const filepath = filepaths[0];
+  const workbook = XLSX.readFile(filepath);
+  console.log(workbook);
 }
 
 console.log(

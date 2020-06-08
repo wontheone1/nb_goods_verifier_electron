@@ -9,6 +9,9 @@ external openOrderCSVFile:
   ((csvFileContent, column, column, column) => unit) => unit =
   "openOrderCSVFile";
 
+[@bs.module "./renderer"]
+external openEcountExcelFile: unit => unit = "openEcountExcelFile";
+
 type state = {
   csvFileContent,
   optionManagementCodeColumn: column,
@@ -90,7 +93,7 @@ let make = () => {
       }>
       {j|쇼핑몰 주문 csv 파일 선택|j}->React.string
     </button>
-    <button onClick={_ => Js.log("ecount")}>
+    <button onClick={_ => openEcountExcelFile()}>
       {j|이카운트 주문입력 xlsx 파일 선택|j}->React.string
     </button>
   </div>;
