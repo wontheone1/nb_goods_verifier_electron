@@ -33,13 +33,12 @@ var app = require("electron").remote;
 var dialog = app.dialog;
 var fs = require("fs");
 const parse = require("csv-parse/lib/sync");
+const iconv = require("iconv-lite");
 
 export function openOrderCSVFile(setState) {
   const filepaths = dialog.showOpenDialogSync({
     properties: ["openFile"],
   });
-
-  console.log(filepaths);
 
   if (!filepaths && filepaths.length == 0) {
     console.log("No file selected");
@@ -48,18 +47,14 @@ export function openOrderCSVFile(setState) {
 
   const filepath = filepaths[0];
 
-  fs.readFile(filepath, "utf-8", (err, data) => {
-    if (err) {
-      alert("An error ocurred reading the file :" + err.message);
-      return;
-    }
+  const originalFile = fs.readFileSync(filepath);
+  const decoded = iconv.decode(originalFile, "EUC-KR");
 
-    const records = parse(data, {
-      bom: true,
-    });
-    console.log(records);
-    setState(records);
+  const records = parse(decoded, {
+    bom: true,
   });
+
+  setState(records);
 }
 
 console.log(
