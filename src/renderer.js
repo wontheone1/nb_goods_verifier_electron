@@ -40,7 +40,7 @@ export function openOrderCSVFile(setState) {
     properties: ["openFile"],
   });
 
-  if (!filepaths && filepaths.length == 0) {
+  if (!filepaths || filepaths.length == 0) {
     console.log("No file selected");
     return;
   }
@@ -55,6 +55,7 @@ export function openOrderCSVFile(setState) {
   });
 
   setState(records);
+  console.log(records);
 }
 
 console.log(
