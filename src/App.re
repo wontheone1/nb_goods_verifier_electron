@@ -5,24 +5,28 @@ type column = array(string);
 type csvFileContent = array(column);
 
 [@bs.module "./renderer"]
-external openOrderCSVFile: ((csvFileContent, column, column) => unit) => unit =
+external openOrderCSVFile:
+  ((csvFileContent, column, column, column) => unit) => unit =
   "openOrderCSVFile";
 
 type state = {
   csvFileContent,
   optionManagementCodeColumn: column,
   orderArticleQtyColumn: column,
+  orderArticlePayAmountIndexColumn: column,
 };
 
 type action =
   | SetCSVFileContent(csvFileContent)
   | SetOptionManagementCodeColumn(column)
-  | SetOrderArticleQtyColumn(column);
+  | SetOrderArticleQtyColumn(column)
+  | SetOrderArticlePayAmountIndexColumn(column);
 
 let initialState = {
   csvFileContent: [|[|"", ""|]|],
   optionManagementCodeColumn: [||],
   orderArticleQtyColumn: [||],
+  orderArticlePayAmountIndexColumn: [||],
 };
 
 let reducer: (state, action) => state =
@@ -37,6 +41,10 @@ let reducer: (state, action) => state =
         ...state,
         orderArticleQtyColumn,
       }
+    | SetOrderArticlePayAmountIndexColumn(orderArticlePayAmountIndexColumn) => {
+        ...state,
+        orderArticlePayAmountIndexColumn,
+      }
     };
   };
 
@@ -49,6 +57,7 @@ let make = () => {
       Js.log(state.csvFileContent);
       Js.log(state.optionManagementCodeColumn);
       Js.log(state.orderArticleQtyColumn);
+      Js.log(state.orderArticlePayAmountIndexColumn);
       None;
     },
     [|state.optionManagementCodeColumn|],
@@ -61,12 +70,22 @@ let make = () => {
     <button
       onClick={_ =>
         openOrderCSVFile(
-          (csvFileContent, optionManagementCodeColumn, orderArticleQtyColumn) => {
+          (
+            csvFileContent,
+            optionManagementCodeColumn,
+            orderArticleQtyColumn,
+            orderArticlePayAmountIndexColumn,
+          ) => {
           dispatch(SetCSVFileContent(csvFileContent));
           dispatch(
             SetOptionManagementCodeColumn(optionManagementCodeColumn),
           );
           dispatch(SetOrderArticleQtyColumn(orderArticleQtyColumn));
+          dispatch(
+            SetOrderArticlePayAmountIndexColumn(
+              orderArticlePayAmountIndexColumn,
+            ),
+          );
         })
       }>
       {j|쇼핑몰 주문 csv 파일 선택|j}->React.string

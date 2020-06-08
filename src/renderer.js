@@ -65,10 +65,16 @@ export function openOrderCSVFile(setState) {
     headerRow,
     (columnName) => columnName === "주문품목 수량"
   );
+  const orderArticlePayAmountIndex = array.findIndex(
+    headerRow,
+    (columnName) => columnName === "주문품목 결제금액"
+  );
+
   setState(
     array.take(records, 10),
     records.map((record) => record[optionManagementCodeIndex]),
-    records.map((record) => record[orderArticleQtyIndex])
+    records.map((record) => record[orderArticleQtyIndex]),
+    records.map((record) => record[orderArticlePayAmountIndex])
   );
 }
 
