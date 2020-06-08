@@ -61,10 +61,15 @@ export function openOrderCSVFile(setState) {
     headerRow,
     (columnName) => columnName === "옵션 관리코드"
   );
+  const orderArticleQtyIndex = array.findIndex(
+    headerRow,
+    (columnName) => columnName === "주문품목 수량"
+  );
   setState(
     array.take(records, 10),
     optionManagementCodeIndex,
-    records.map((record) => record[optionManagementCodeIndex])
+    records.map((record) => record[optionManagementCodeIndex]),
+    records.map((record) => record[orderArticleQtyIndex])
   );
 }
 
