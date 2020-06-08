@@ -34,6 +34,8 @@ var dialog = app.dialog;
 var fs = require("fs");
 const parse = require("csv-parse/lib/sync");
 const iconv = require("iconv-lite");
+var _ = require("lodash/core");
+const array = require("lodash/array");
 
 export function openOrderCSVFile(setState) {
   const filepaths = dialog.showOpenDialogSync({
@@ -54,8 +56,16 @@ export function openOrderCSVFile(setState) {
     bom: true,
   });
 
-  setState(records);
-  console.log(records);
+  const headerRow = records[0];
+  const optionManagementCodeIndex = array.findIndex(
+    headerRow,
+    (columnName) => columnName === "옵션 관리코드"
+  );
+  setState(
+    array.take(records, 10),
+    optionManagementCodeIndex,
+    records.map((record) => record[optionManagementCodeIndex])
+  );
 }
 
 console.log(
