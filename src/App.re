@@ -30,7 +30,7 @@ let make = () => {
           dispatch(SetState(csvFileContent))
         )
       }>
-      {j|주문 csv 파일 선택|j}->React.string
+      {j|쇼핑몰 주문 csv 파일 선택|j}->React.string
     </button>
     <p> state.csvFileContent->React.string </p>
   </div>;
