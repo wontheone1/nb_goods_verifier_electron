@@ -90,5 +90,8 @@ let make = () => {
       }>
       {j|쇼핑몰 주문 csv 파일 선택|j}->React.string
     </button>
+    <button onClick={_ => Js.log("ecount")}>
+      {j|이카운트 주문입력 xlsx 파일 선택|j}->React.string
+    </button>
   </div>;
 };
