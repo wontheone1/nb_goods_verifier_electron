@@ -91,6 +91,11 @@ export function openEcountExcelFile(setState) {
   const filepath = filepaths[0];
   const workbook = XLSX.readFile(filepath);
   console.log(workbook);
+  const currentSalesReport = XLSX.utils.sheet_to_json(
+    workbook.Sheets.판매현황,
+    { range: 1 }
+  );
+  console.log(currentSalesReport);
 }
 
 console.log(
