@@ -71,11 +71,23 @@ export function openOrderCSVFile(setState) {
     (columnName) => columnName === "주문품목 결제금액"
   );
 
-  setState(
-    records.map((record) => record[optionManagementCodeIndex]),
-    records.map((record) => record[orderArticleQtyIndex]),
-    records.map((record) => record[orderArticlePayAmountIndex])
+  const optionManagementCodeColumn = records.map(
+    (record) => record[optionManagementCodeIndex]
   );
+
+  const orderArticleQtyColumn = records.map(
+    (record) => record[orderArticleQtyIndex]
+  );
+
+  const orderArticlePayAmountIndexColumn = records.map(
+    (record) => record[orderArticlePayAmountIndex]
+  );
+
+  setState({
+    optionManagementCodeColumn,
+    orderArticleQtyColumn,
+    orderArticlePayAmountIndexColumn,
+  });
 }
 
 export function openEcountExcelFile(setEcountData) {

@@ -3,6 +3,12 @@ external dialog: unit => unit = "dialog";
 
 type column = array(string);
 
+type orderData = {
+  optionManagementCodeColumn: column,
+  orderArticleQtyColumn: column,
+  orderArticlePayAmountIndexColumn: column,
+};
+
 type ecountData = {
   articleCodeColumn: column,
   eaColumn: column,
@@ -10,30 +16,27 @@ type ecountData = {
 };
 
 type state = {
-  optionManagementCodeColumn: column,
-  orderArticleQtyColumn: column,
-  orderArticlePayAmountIndexColumn: column,
+  orderData,
   ecountData,
 };
 
 [@bs.module "./renderer"]
-external openOrderCSVFile: ((column, column, column) => unit) => unit =
-  "openOrderCSVFile";
+external openOrderCSVFile: (orderData => unit) => unit = "openOrderCSVFile";
 
 [@bs.module "./renderer"]
 external openEcountExcelFile: (ecountData => unit) => unit =
   "openEcountExcelFile";
 
 type action =
-  | SetOptionManagementCodeColumn(column)
-  | SetOrderArticleQtyColumn(column)
-  | SetOrderArticlePayAmountIndexColumn(column)
+  | SetOrderData(orderData)
   | SetEcountData(ecountData);
 
 let initialState = {
-  optionManagementCodeColumn: [||],
-  orderArticleQtyColumn: [||],
-  orderArticlePayAmountIndexColumn: [||],
+  orderData: {
+    optionManagementCodeColumn: [||],
+    orderArticleQtyColumn: [||],
+    orderArticlePayAmountIndexColumn: [||],
+  },
   ecountData: {
     articleCodeColumn: [||],
     eaColumn: [||],
@@ -44,18 +47,7 @@ let initialState = {
 let reducer: (state, action) => state =
   (state, action) => {
     switch (action) {
-    | SetOptionManagementCodeColumn(optionManagementCodeColumn) => {
-        ...state,
-        optionManagementCodeColumn,
-      }
-    | SetOrderArticleQtyColumn(orderArticleQtyColumn) => {
-        ...state,
-        orderArticleQtyColumn,
-      }
-    | SetOrderArticlePayAmountIndexColumn(orderArticlePayAmountIndexColumn) => {
-        ...state,
-        orderArticlePayAmountIndexColumn,
-      }
+    | SetOrderData(orderData) => {...state, orderData}
     | SetEcountData(ecountData) => {...state, ecountData}
     };
   };
@@ -66,12 +58,10 @@ let make = () => {
 
   React.useEffect1(
     () => {
-      Js.log(state.optionManagementCodeColumn);
-      Js.log(state.orderArticleQtyColumn);
-      Js.log(state.orderArticlePayAmountIndexColumn);
+      Js.log(state.orderData);
       None;
     },
-    [|state.optionManagementCodeColumn|],
+    [|state.orderData|],
   );
 
   React.useEffect1(
@@ -88,22 +78,7 @@ let make = () => {
     </p>
     <button
       onClick={_ =>
-        openOrderCSVFile(
-          (
-            optionManagementCodeColumn,
-            orderArticleQtyColumn,
-            orderArticlePayAmountIndexColumn,
-          ) => {
-          dispatch(
-            SetOptionManagementCodeColumn(optionManagementCodeColumn),
-          );
-          dispatch(SetOrderArticleQtyColumn(orderArticleQtyColumn));
-          dispatch(
-            SetOrderArticlePayAmountIndexColumn(
-              orderArticlePayAmountIndexColumn,
-            ),
-          );
-        })
+        openOrderCSVFile(orderData => {dispatch(SetOrderData(orderData))})
       }>
       {j|쇼핑몰 주문 csv 파일 선택|j}->React.string
     </button>
