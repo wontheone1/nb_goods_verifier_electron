@@ -71,16 +71,16 @@ export function openOrderCSVFile(setState) {
     (columnName) => columnName === "주문품목 결제금액"
   );
 
-  const optionManagementCodeColumn = records.map(
-    (record) => record[optionManagementCodeIndex]
+  const optionManagementCodeColumn = array.tail(
+    records.map((record) => record[optionManagementCodeIndex])
   );
 
-  const orderArticleQtyColumn = records.map(
-    (record) => record[orderArticleQtyIndex]
+  const orderArticleQtyColumn = array.tail(
+    records.map((record) => record[orderArticleQtyIndex])
   );
 
-  const orderArticlePayAmountIndexColumn = records.map(
-    (record) => record[orderArticlePayAmountIndex]
+  const orderArticlePayAmountIndexColumn = array.tail(
+    records.map((record) => record[orderArticlePayAmountIndex])
   );
 
   setState({
