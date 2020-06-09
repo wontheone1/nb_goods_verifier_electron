@@ -2,6 +2,7 @@
 external dialog: unit => unit = "dialog";
 
 type column = array(string);
+type intColumn = array(int);
 
 type orderData = {
   optionManagementCodeColumn: column,
@@ -11,8 +12,8 @@ type orderData = {
 
 type ecountData = {
   articleCodeColumn: column,
-  eaColumn: column,
-  totalColumn: column,
+  eaColumn: intColumn,
+  totalColumn: intColumn,
 };
 
 type matchResult = {
