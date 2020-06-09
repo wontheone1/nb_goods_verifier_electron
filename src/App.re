@@ -19,6 +19,7 @@ type ecountData = {
 type matchResult = {
   optionCodeToArticleCodeMatchResult: array(option(int)),
   orderQtyEaMatchResult: array(bool),
+  payAmountTotalMatchResult: array(bool),
 };
 
 type state = {
@@ -53,6 +54,7 @@ let initialState = {
   matchResult: {
     optionCodeToArticleCodeMatchResult: [||],
     orderQtyEaMatchResult: [||],
+    payAmountTotalMatchResult: [||],
   },
 };
 
@@ -85,6 +87,24 @@ let make = () => {
     Belt.Array.length(optionCodeColumn) != 0
     && Belt.Array.length(articleCodeColumn) != 0;
 
+  let matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx =
+      (
+        optionCodeToArticleCodeMatchResult,
+        columnFromOrderData,
+        columnFromEcountData,
+      ) => {
+    Belt.Array.mapWithIndex(
+      optionCodeToArticleCodeMatchResult,
+      (indexOptionCodeColumn, indexArticleCodeColumn) =>
+      switch (indexArticleCodeColumn) {
+      | Some(indexArticleCodeColumn) =>
+        columnFromOrderData[indexOptionCodeColumn]->int_of_string
+        == columnFromEcountData[indexArticleCodeColumn]
+      | None => false
+      }
+    );
+  };
+
   let match = () => {
     let optionCodeToArticleCodeMatchResult =
       Belt.Array.map(optionCodeColumn, (optionCode: string) =>
@@ -92,19 +112,24 @@ let make = () => {
       );
 
     let orderQtyEaMatchResult =
-      Belt.Array.mapWithIndex(
+      matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx(
         optionCodeToArticleCodeMatchResult,
-        (indexOptionCodeColumn, indexArticleCodeColumn) =>
-        switch (indexArticleCodeColumn) {
-        | Some(indexArticleCodeColumn) =>
-          state.orderData.orderArticleQtyColumn[indexOptionCodeColumn]
-          ->int_of_string
-          == state.ecountData.eaColumn[indexArticleCodeColumn]
-        | None => false
-        }
+        state.orderData.orderArticleQtyColumn,
+        state.ecountData.eaColumn,
       );
 
-    {optionCodeToArticleCodeMatchResult, orderQtyEaMatchResult};
+    let payAmountTotalMatchResult =
+      matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx(
+        optionCodeToArticleCodeMatchResult,
+        state.orderData.orderArticlePayAmountIndexColumn,
+        state.ecountData.totalColumn,
+      );
+
+    {
+      optionCodeToArticleCodeMatchResult,
+      orderQtyEaMatchResult,
+      payAmountTotalMatchResult,
+    };
   };
 
   React.useEffect1(
