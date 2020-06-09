@@ -54,11 +54,11 @@ export function openOrderCSVFile(setState) {
   const originalFile = fs.readFileSync(filepath);
   const decoded = iconv.decode(originalFile, "EUC-KR");
 
-  const records = parse(decoded, {
+  const csvContents = parse(decoded, {
     bom: true,
   });
 
-  const headerRow = records[0];
+  const headerRow = csvContents[0];
   const optionManagementCodeIndex = array.findIndex(
     headerRow,
     (columnName) => columnName === "옵션 관리코드"
@@ -73,18 +73,19 @@ export function openOrderCSVFile(setState) {
   );
 
   const optionManagementCodeColumn = array.tail(
-    records.map((record) => record[optionManagementCodeIndex])
+    csvContents.map((record) => record[optionManagementCodeIndex])
   );
 
   const orderArticleQtyColumn = array.tail(
-    records.map((record) => record[orderArticleQtyIndex])
+    csvContents.map((record) => record[orderArticleQtyIndex])
   );
 
   const orderArticlePayAmountColumn = array.tail(
-    records.map((record) => record[orderArticlePayAmountIndex])
+    csvContents.map((record) => record[orderArticlePayAmountIndex])
   );
 
   setState({
+    csvContents,
     optionManagementCodeColumn,
     orderArticleQtyColumn,
     orderArticlePayAmountColumn,

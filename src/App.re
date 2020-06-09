@@ -5,6 +5,7 @@ type column = array(string);
 type intColumn = array(int);
 
 type orderData = {
+  csvContents: array(column),
   optionManagementCodeColumn: column,
   orderArticleQtyColumn: column,
   orderArticlePayAmountColumn: column,
@@ -42,6 +43,7 @@ type action =
 
 let initialState = {
   orderData: {
+    csvContents: [||],
     optionManagementCodeColumn: [||],
     orderArticleQtyColumn: [||],
     orderArticlePayAmountColumn: [||],
