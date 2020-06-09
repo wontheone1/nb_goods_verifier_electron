@@ -80,14 +80,14 @@ export function openOrderCSVFile(setState) {
     records.map((record) => record[orderArticleQtyIndex])
   );
 
-  const orderArticlePayAmountIndexColumn = array.tail(
+  const orderArticlePayAmountColumn = array.tail(
     records.map((record) => record[orderArticlePayAmountIndex])
   );
 
   setState({
     optionManagementCodeColumn,
     orderArticleQtyColumn,
-    orderArticlePayAmountIndexColumn,
+    orderArticlePayAmountColumn,
   });
 }
 

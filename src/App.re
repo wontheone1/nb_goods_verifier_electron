@@ -7,7 +7,7 @@ type intColumn = array(int);
 type orderData = {
   optionManagementCodeColumn: column,
   orderArticleQtyColumn: column,
-  orderArticlePayAmountIndexColumn: column,
+  orderArticlePayAmountColumn: column,
 };
 
 type ecountData = {
@@ -44,7 +44,7 @@ let initialState = {
   orderData: {
     optionManagementCodeColumn: [||],
     orderArticleQtyColumn: [||],
-    orderArticlePayAmountIndexColumn: [||],
+    orderArticlePayAmountColumn: [||],
   },
   ecountData: {
     articleCodeColumn: [||],
@@ -121,7 +121,7 @@ let make = () => {
     let payAmountTotalMatchResult =
       matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx(
         optionCodeToArticleCodeMatchResult,
-        state.orderData.orderArticlePayAmountIndexColumn,
+        state.orderData.orderArticlePayAmountColumn,
         state.ecountData.totalColumn,
       );
 
