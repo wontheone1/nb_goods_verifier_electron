@@ -29,6 +29,8 @@
 import "./index.css";
 import * as React from "./Index.bs";
 
+console.log = function () {};
+
 var app = require("electron").remote;
 var dialog = app.dialog;
 var fs = require("fs");
@@ -127,7 +129,7 @@ export function saveOutputFile(outputContents) {
     properties: ["createDirectory", "showOverwriteConfirmation"],
   });
 
-  const data = stringify(outputContents);
-
-  fs.writeFileSync(filepath, data);
+  if (filepath) {
+    fs.writeFileSync(filepath, stringify(outputContents));
+  }
 }
