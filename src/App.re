@@ -37,6 +37,9 @@ external openOrderCSVFile: (orderData => unit) => unit = "openOrderCSVFile";
 external openEcountExcelFile: (ecountData => unit) => unit =
   "openEcountExcelFile";
 
+[@bs.module "./renderer"]
+external saveOutputFile: array(column) => unit = "saveOutputFile";
+
 type action =
   | SetOrderData(orderData)
   | SetEcountData(ecountData)
@@ -218,8 +221,11 @@ let make = () => {
 
   React.useEffect1(
     () => {
-      Js.log("Output contents");
-      Js.log(state.outputContents);
+      if (bothFileUploaded()) {
+        Js.log("Output contents");
+        Js.log(state.outputContents);
+        saveOutputFile(state.outputContents);
+      };
       None;
     },
     [|state.outputContents|],

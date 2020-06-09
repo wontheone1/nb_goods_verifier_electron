@@ -33,6 +33,7 @@ var app = require("electron").remote;
 var dialog = app.dialog;
 var fs = require("fs");
 const parse = require("csv-parse/lib/sync");
+const stringify = require("csv-stringify/lib/sync");
 const iconv = require("iconv-lite");
 var _ = require("lodash/core");
 const array = require("lodash/array");
@@ -120,6 +121,13 @@ export function openEcountExcelFile(setEcountData) {
   });
 }
 
-console.log(
-  '👋 This message is being logged by "renderer.js", included via webpack'
-);
+export function saveOutputFile(outputContents) {
+  const filepath = dialog.showSaveDialogSync({
+    filters: [{ name: "CSV files", extensions: ["csv"] }],
+    properties: ["createDirectory", "showOverwriteConfirmation"],
+  });
+
+  const data = stringify(outputContents);
+
+  fs.writeFileSync(filepath, data);
+}
