@@ -40,6 +40,7 @@ const XLSX = require("xlsx");
 
 export function openOrderCSVFile(setState) {
   const filepaths = dialog.showOpenDialogSync({
+    filters: [{ name: "CSV files", extensions: ["csv"] }],
     properties: ["openFile"],
   });
 
@@ -92,6 +93,7 @@ export function openOrderCSVFile(setState) {
 
 export function openEcountExcelFile(setEcountData) {
   const filepaths = dialog.showOpenDialogSync({
+    filters: [{ name: "Excel files", extensions: ["xlsx", "xls"] }],
     properties: ["openFile"],
   });
 
