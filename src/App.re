@@ -17,7 +17,8 @@ type ecountData = {
 };
 
 type matchResult = {
-  optionCodeToArticleCodeMatchResult: array((int, option(int))),
+  optionCodeToArticleCodeMatchResult: array(option(int)),
+  orderQtyEaMatchResult: array(bool),
 };
 
 type state = {
@@ -51,6 +52,7 @@ let initialState = {
   },
   matchResult: {
     optionCodeToArticleCodeMatchResult: [||],
+    orderQtyEaMatchResult: [||],
   },
 };
 
@@ -83,18 +85,33 @@ let make = () => {
     Belt.Array.length(optionCodeColumn) != 0
     && Belt.Array.length(articleCodeColumn) != 0;
 
-  let match = () =>
-    Belt.Array.mapWithIndex(optionCodeColumn, (i: int, optionCode: string) =>
-      (i, findIndexFromColumn(optionCode, articleCodeColumn))
-    );
+  let match = () => {
+    let optionCodeToArticleCodeMatchResult =
+      Belt.Array.map(optionCodeColumn, (optionCode: string) =>
+        findIndexFromColumn(optionCode, articleCodeColumn)
+      );
+
+    let orderQtyEaMatchResult =
+      Belt.Array.mapWithIndex(
+        optionCodeToArticleCodeMatchResult,
+        (indexOptionCodeColumn, indexArticleCodeColumn) =>
+        switch (indexArticleCodeColumn) {
+        | Some(indexArticleCodeColumn) =>
+          state.orderData.orderArticleQtyColumn[indexOptionCodeColumn]
+          ->int_of_string
+          == state.ecountData.eaColumn[indexArticleCodeColumn]
+        | None => false
+        }
+      );
+
+    {optionCodeToArticleCodeMatchResult, orderQtyEaMatchResult};
+  };
 
   React.useEffect1(
     () => {
       Js.log(state.orderData);
       if (bothFileUploaded()) {
-        dispatch(
-          SetMatchResult({optionCodeToArticleCodeMatchResult: match()}),
-        );
+        dispatch(SetMatchResult(match()));
       };
       None;
     },
@@ -105,9 +122,7 @@ let make = () => {
     () => {
       Js.log(state.ecountData);
       if (bothFileUploaded()) {
-        dispatch(
-          SetMatchResult({optionCodeToArticleCodeMatchResult: match()}),
-        );
+        dispatch(SetMatchResult(match()));
       };
       None;
     },
