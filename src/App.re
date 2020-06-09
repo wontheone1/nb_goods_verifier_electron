@@ -15,9 +15,14 @@ type ecountData = {
   totalColumn: column,
 };
 
+type matchResult = {
+  optionCodeToArticleCodeMatchResult: array((int, option(int))),
+};
+
 type state = {
   orderData,
   ecountData,
+  matchResult,
 };
 
 [@bs.module "./renderer"]
@@ -29,7 +34,8 @@ external openEcountExcelFile: (ecountData => unit) => unit =
 
 type action =
   | SetOrderData(orderData)
-  | SetEcountData(ecountData);
+  | SetEcountData(ecountData)
+  | SetMatchResult(matchResult);
 
 let initialState = {
   orderData: {
@@ -42,6 +48,18 @@ let initialState = {
     eaColumn: [||],
     totalColumn: [||],
   },
+  matchResult: {
+    optionCodeToArticleCodeMatchResult: [||],
+  },
+};
+
+let findIndexFromColumn = (item, col) => {
+  let item = String.trim(item);
+  if (item == "") {
+    None;
+  } else {
+    Belt.Array.getIndexBy(col, value => item == String.trim(value));
+  };
 };
 
 let reducer: (state, action) => state =
@@ -49,6 +67,7 @@ let reducer: (state, action) => state =
     switch (action) {
     | SetOrderData(orderData) => {...state, orderData}
     | SetEcountData(ecountData) => {...state, ecountData}
+    | SetMatchResult(matchResult) => {...state, matchResult}
     };
   };
 
@@ -56,9 +75,26 @@ let reducer: (state, action) => state =
 let make = () => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
+  let optionCodeColumn = state.orderData.optionManagementCodeColumn;
+  let articleCodeColumn = state.ecountData.articleCodeColumn;
+
+  let bothFileUploaded = () =>
+    Belt.Array.length(optionCodeColumn) != 0
+    && Belt.Array.length(articleCodeColumn) != 0;
+
+  let match = () =>
+    Belt.Array.mapWithIndex(optionCodeColumn, (i: int, optionCode: string) =>
+      (i, findIndexFromColumn(optionCode, articleCodeColumn))
+    );
+
   React.useEffect1(
     () => {
       Js.log(state.orderData);
+      if (bothFileUploaded()) {
+        dispatch(
+          SetMatchResult({optionCodeToArticleCodeMatchResult: match()}),
+        );
+      };
       None;
     },
     [|state.orderData|],
@@ -67,9 +103,22 @@ let make = () => {
   React.useEffect1(
     () => {
       Js.log(state.ecountData);
+      if (bothFileUploaded()) {
+        dispatch(
+          SetMatchResult({optionCodeToArticleCodeMatchResult: match()}),
+        );
+      };
       None;
     },
     [|state.ecountData|],
+  );
+
+  React.useEffect1(
+    () => {
+      Js.log(state.matchResult);
+      None;
+    },
+    [|state.matchResult|],
   );
 
   <div>
