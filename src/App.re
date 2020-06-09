@@ -2,7 +2,6 @@
 external dialog: unit => unit = "dialog";
 
 type column = array(string);
-type csvFileContent = array(column);
 
 type ecountData = {
   articleCodeColumn: column,
@@ -11,7 +10,6 @@ type ecountData = {
 };
 
 type state = {
-  csvFileContent,
   optionManagementCodeColumn: column,
   orderArticleQtyColumn: column,
   orderArticlePayAmountIndexColumn: column,
@@ -19,8 +17,7 @@ type state = {
 };
 
 [@bs.module "./renderer"]
-external openOrderCSVFile:
-  ((csvFileContent, column, column, column) => unit) => unit =
+external openOrderCSVFile: ((column, column, column) => unit) => unit =
   "openOrderCSVFile";
 
 [@bs.module "./renderer"]
@@ -28,14 +25,12 @@ external openEcountExcelFile: (ecountData => unit) => unit =
   "openEcountExcelFile";
 
 type action =
-  | SetCSVFileContent(csvFileContent)
   | SetOptionManagementCodeColumn(column)
   | SetOrderArticleQtyColumn(column)
   | SetOrderArticlePayAmountIndexColumn(column)
   | SetEcountData(ecountData);
 
 let initialState = {
-  csvFileContent: [|[|"", ""|]|],
   optionManagementCodeColumn: [||],
   orderArticleQtyColumn: [||],
   orderArticlePayAmountIndexColumn: [||],
@@ -49,7 +44,6 @@ let initialState = {
 let reducer: (state, action) => state =
   (state, action) => {
     switch (action) {
-    | SetCSVFileContent(csvFileContent) => {...state, csvFileContent}
     | SetOptionManagementCodeColumn(optionManagementCodeColumn) => {
         ...state,
         optionManagementCodeColumn,
@@ -72,7 +66,6 @@ let make = () => {
 
   React.useEffect1(
     () => {
-      Js.log(state.csvFileContent);
       Js.log(state.optionManagementCodeColumn);
       Js.log(state.orderArticleQtyColumn);
       Js.log(state.orderArticlePayAmountIndexColumn);
@@ -97,12 +90,10 @@ let make = () => {
       onClick={_ =>
         openOrderCSVFile(
           (
-            csvFileContent,
             optionManagementCodeColumn,
             orderArticleQtyColumn,
             orderArticlePayAmountIndexColumn,
           ) => {
-          dispatch(SetCSVFileContent(csvFileContent));
           dispatch(
             SetOptionManagementCodeColumn(optionManagementCodeColumn),
           );
