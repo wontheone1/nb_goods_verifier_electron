@@ -1,5 +1,24 @@
+module Ui = SemanticUi;
 [@bs.module "electron"] [@bs.scope "remote"]
 external dialog: unit => unit = "dialog";
+
+let panes: array(Ui.Tab.pane) = [|
+  {
+    menuItem: |j},
+    render: () =>
+      <Ui.Tab.Pane attached=false>
+        <Locations locations searchQuery={state.searchQuery} setLocations />
+        <CreateLocationForm />
+      </Ui.Tab.Pane>,
+  },
+  {
+    menuItem: {j|재고관리|j},
+    render: () =>
+      <Ui.Tab.Pane attached=false>
+        <Items articles items searchQuery={state.searchQuery} setItems />
+      </Ui.Tab.Pane>,
+  },
+|];
 
 type column = array(string);
 type intColumn = array(int);
