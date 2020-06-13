@@ -1,22 +1,23 @@
 module Ui = SemanticUi;
+
 [@bs.module "electron"] [@bs.scope "remote"]
 external dialog: unit => unit = "dialog";
 
 let panes: array(Ui.Tab.pane) = [|
   {
-    menuItem: |j},
+    menuItem: {j|매칭실패품목보기|j},
     render: () =>
-      <Ui.Tab.Pane attached=false>
-        <Locations locations searchQuery={state.searchQuery} setLocations />
-        <CreateLocationForm />
-      </Ui.Tab.Pane>,
+      <Ui.Tab.Pane attached=false> "fail"->React.string </Ui.Tab.Pane>,
   },
   {
-    menuItem: {j|재고관리|j},
+    menuItem: {j|모두보기|j},
     render: () =>
-      <Ui.Tab.Pane attached=false>
-        <Items articles items searchQuery={state.searchQuery} setItems />
-      </Ui.Tab.Pane>,
+      <Ui.Tab.Pane attached=false> "all"->React.string </Ui.Tab.Pane>,
+  },
+  {
+    menuItem: {j|매칭성공품목보기|j},
+    render: () =>
+      <Ui.Tab.Pane attached=false> "Success"->React.string </Ui.Tab.Pane>,
   },
 |];
 
@@ -254,6 +255,7 @@ let make = () => {
     <p>
       {j|NB 검수 시스템에 오신 것을 환영합니다.|j}->React.string
     </p>
+    <Ui.Tab menu={secondary: true, pointing: true} panes />
     <button
       onClick={_ =>
         openOrderCSVFile(orderData => {dispatch(SetOrderData(orderData))})
