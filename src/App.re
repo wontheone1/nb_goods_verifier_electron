@@ -3,76 +3,18 @@ module Ui = SemanticUi;
 [@bs.module "electron"] [@bs.scope "remote"]
 external dialog: unit => unit = "dialog";
 
-let panes: array(Ui.Tab.pane) = [|
-  {
-    menuItem: {j|매칭실패품목보기|j},
-    render: () =>
-      <Ui.Tab.Pane attached=false>
-        <ResultTable tabName="success" />
-      </Ui.Tab.Pane>,
-  },
-  {
-    menuItem: {j|모두보기|j},
-    render: () =>
-      <Ui.Tab.Pane attached=false>
-        <ResultTable tabName="all" />
-      </Ui.Tab.Pane>,
-  },
-  {
-    menuItem: {j|매칭성공품목보기|j},
-    render: () =>
-      <Ui.Tab.Pane attached=false>
-        <ResultTable tabName="fail" />
-      </Ui.Tab.Pane>,
-  },
-|];
-
-type column = array(string);
-type intColumn = array(int);
-
-type orderData = {
-  csvContents: array(column),
-  optionManagementCodeColumn: column,
-  orderArticleQtyColumn: column,
-  orderArticlePayAmountColumn: column,
-};
-
-type ecountData = {
-  articleCodeColumn: column,
-  eaColumn: intColumn,
-  totalColumn: intColumn,
-};
-
-type matchResult = {
-  optionCodeToArticleCodeMatchResult: array(option(int)),
-  orderQtyEaMatchResult: array(bool),
-  payAmountTotalMatchResult: array(bool),
-};
-
-type state = {
-  orderData,
-  ecountData,
-  matchResult,
-  outputContents: array(column),
-};
+[@bs.module "./renderer"]
+external openOrderCSVFile: (Model.orderData => unit) => unit =
+  "openOrderCSVFile";
 
 [@bs.module "./renderer"]
-external openOrderCSVFile: (orderData => unit) => unit = "openOrderCSVFile";
-
-[@bs.module "./renderer"]
-external openEcountExcelFile: (ecountData => unit) => unit =
+external openEcountExcelFile: (Model.ecountData => unit) => unit =
   "openEcountExcelFile";
 
 [@bs.module "./renderer"]
-external saveOutputFile: array(column) => unit = "saveOutputFile";
+external saveOutputFile: array(Model.column) => unit = "saveOutputFile";
 
-type action =
-  | SetOrderData(orderData)
-  | SetEcountData(ecountData)
-  | SetMatchResult(matchResult)
-  | SetOutputContents(array(column));
-
-let initialState = {
+let initialState: Model.state = {
   orderData: {
     csvContents: [||],
     optionManagementCodeColumn: [||],
@@ -89,7 +31,7 @@ let initialState = {
     orderQtyEaMatchResult: [||],
     payAmountTotalMatchResult: [||],
   },
-  outputContents: [||],
+  outputContents: None,
 };
 
 let findIndexFromColumn = (item, col) => {
@@ -101,7 +43,7 @@ let findIndexFromColumn = (item, col) => {
   };
 };
 
-let reducer: (state, action) => state =
+let reducer: (Model.state, Model.action) => Model.state =
   (state, action) => {
     switch (action) {
     | SetOrderData(orderData) => {...state, orderData}
@@ -149,32 +91,33 @@ let make = () => {
     );
   };
 
-  let match = () => {
-    let optionCodeToArticleCodeMatchResult =
-      Belt.Array.map(optionCodeColumn, (optionCode: string) =>
-        findIndexFromColumn(optionCode, articleCodeColumn)
-      );
+  let match: unit => Model.matchResult =
+    () => {
+      let optionCodeToArticleCodeMatchResult =
+        Belt.Array.map(optionCodeColumn, (optionCode: string) =>
+          findIndexFromColumn(optionCode, articleCodeColumn)
+        );
 
-    let orderQtyEaMatchResult =
-      matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx(
+      let orderQtyEaMatchResult =
+        matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx(
+          optionCodeToArticleCodeMatchResult,
+          state.orderData.orderArticleQtyColumn,
+          state.ecountData.eaColumn,
+        );
+
+      let payAmountTotalMatchResult =
+        matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx(
+          optionCodeToArticleCodeMatchResult,
+          state.orderData.orderArticlePayAmountColumn,
+          state.ecountData.totalColumn,
+        );
+
+      {
         optionCodeToArticleCodeMatchResult,
-        state.orderData.orderArticleQtyColumn,
-        state.ecountData.eaColumn,
-      );
-
-    let payAmountTotalMatchResult =
-      matchTwoColumnsUsingOptionCodeIdxAndArticleCodeIdx(
-        optionCodeToArticleCodeMatchResult,
-        state.orderData.orderArticlePayAmountColumn,
-        state.ecountData.totalColumn,
-      );
-
-    {
-      optionCodeToArticleCodeMatchResult,
-      orderQtyEaMatchResult,
-      payAmountTotalMatchResult,
+        orderQtyEaMatchResult,
+        payAmountTotalMatchResult,
+      };
     };
-  };
 
   React.useEffect1(
     () => {
@@ -238,7 +181,7 @@ let make = () => {
             }
           );
         };
-        dispatch(SetOutputContents(outputContents));
+        dispatch(SetOutputContents(Some(outputContents)));
       };
       None;
     },
@@ -249,19 +192,40 @@ let make = () => {
     () => {
       if (bothFileUploaded()) {
         Js.log("Output contents");
-        Js.log(state.outputContents);
-        saveOutputFile(state.outputContents);
       };
       None;
     },
     [|state.outputContents|],
   );
 
+  let panes: array(Ui.Tab.pane) = [|
+    {
+      menuItem: {j|매칭실패품목보기|j},
+      render: () =>
+        <Ui.Tab.Pane attached=false>
+          <ResultTable tableContents={state.outputContents} />
+        </Ui.Tab.Pane>,
+    },
+    {
+      menuItem: {j|모두보기|j},
+      render: () =>
+        <Ui.Tab.Pane attached=false>
+          <ResultTable tableContents={state.outputContents} />
+        </Ui.Tab.Pane>,
+    },
+    {
+      menuItem: {j|매칭성공품목보기|j},
+      render: () =>
+        <Ui.Tab.Pane attached=false>
+          <ResultTable tableContents={state.outputContents} />
+        </Ui.Tab.Pane>,
+    },
+  |];
+
   <div>
     <p>
       {j|NB 검수 시스템에 오신 것을 환영합니다.|j}->React.string
     </p>
-    <Ui.Tab menu={secondary: true, pointing: true} panes />
     <button
       onClick={_ =>
         openOrderCSVFile(orderData => {dispatch(SetOrderData(orderData))})
@@ -276,5 +240,6 @@ let make = () => {
       }>
       {j|이카운트 주문입력 xlsx 파일 선택|j}->React.string
     </button>
+    <Ui.Tab menu={secondary: true, pointing: true} panes />
   </div>;
 };

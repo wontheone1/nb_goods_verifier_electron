@@ -21,15 +21,25 @@ let resultTable = [|
 |];
 
 [@react.component]
-let make = (~tabName) => {
+let make = (~tableContents: option(array(Model.column))) => {
   <Ui.Table>
-    tabName->React.string
     <Ui.Table.Header>
-      {resultTable
-       ->Belt.Array.map((col: column) =>
-           <Ui.Table.HeaderCell> col.name->React.string </Ui.Table.HeaderCell>
-         )
-       ->React.array}
+      <Ui.Table.Row>
+        {switch (tableContents) {
+         | None =>
+           {j|csv파일과 excel파일을 업로드하십시오.|j}
+           ->React.string
+         | Some(tableContents) =>
+           tableContents[0]
+           ->Belt.Array.map(header => {
+               Js.log(header);
+               <Ui.Table.HeaderCell key=header>
+                 header->React.string
+               </Ui.Table.HeaderCell>;
+             })
+           ->React.array
+         }}
+      </Ui.Table.Row>
     </Ui.Table.Header>
   </Ui.Table>;
 };
