@@ -64,6 +64,14 @@ export function openOrderCSVFile(setState) {
     headerRow,
     (columnName) => columnName === "옵션 관리코드"
   );
+  const orderArticleNameIndex = array.findIndex(
+    headerRow,
+    (columnName) => columnName === "주문상품명"
+  );
+  const articleOptionIndex = array.findIndex(
+    headerRow,
+    (columnName) => columnName === "상품옵션"
+  );
   const orderArticleQtyIndex = array.findIndex(
     headerRow,
     (columnName) => columnName === "주문품목 수량"
@@ -76,11 +84,15 @@ export function openOrderCSVFile(setState) {
   const optionManagementCodeColumn = array.tail(
     csvContents.map((record) => record[optionManagementCodeIndex])
   );
-
+  const orderArticleNameColumn = array.tail(
+    csvContents.map((record) => record[orderArticleNameIndex])
+  );
+  const articleOptionColumn = array.tail(
+    csvContents.map((record) => record[articleOptionIndex])
+  );
   const orderArticleQtyColumn = array.tail(
     csvContents.map((record) => record[orderArticleQtyIndex])
   );
-
   const orderArticlePayAmountColumn = array.tail(
     csvContents.map((record) => record[orderArticlePayAmountIndex])
   );
@@ -88,6 +100,8 @@ export function openOrderCSVFile(setState) {
   setState({
     csvContents,
     optionManagementCodeColumn,
+    orderArticleNameColumn,
+    articleOptionColumn,
     orderArticleQtyColumn,
     orderArticlePayAmountColumn,
   });

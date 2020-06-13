@@ -18,6 +18,8 @@ let initialState: Model.state = {
   orderData: {
     csvContents: [||],
     optionManagementCodeColumn: [||],
+    orderArticleNameColumn: [||],
+    articleOptionColumn: [||],
     orderArticleQtyColumn: [||],
     orderArticlePayAmountColumn: [||],
   },

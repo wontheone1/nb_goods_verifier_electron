@@ -5,6 +5,8 @@ type intColumn = array(int);
 type orderData = {
   csvContents: array(column),
   optionManagementCodeColumn: column,
+  orderArticleNameColumn: column,
+  articleOptionColumn: column,
   orderArticleQtyColumn: column,
   orderArticlePayAmountColumn: column,
 };
