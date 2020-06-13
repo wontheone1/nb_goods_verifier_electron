@@ -8,35 +8,37 @@ let optionToBool: option(int) => bool =
 let boolToPassFail: bool => string = v => if (v) {"PASS"} else {"FAIL"};
 
 let makeOutputContents = (state: Model.state) => {
-  Belt.Array.mapWithIndex(state.orderData.csvContents, (i, row) =>
-    if (i == 0) {
-      Belt.Array.concat(
-        row,
+  Belt.Array.concat(
+    [|
+      [|
+        {j|주문상품명|j},
+        {j|상품옵션|j},
+        {j|검수결과|j},
+        {j|품목체크|j},
+        {j|수량체크|j},
+        {j|단가체크|j},
+      |],
+    |],
+    Belt.Array.mapWithIndex(
+      state.orderData.orderArticleNameColumn,
+      (i, row) => {
+        let articleCodeMatchResult =
+          state.matchResult.optionCodeToArticleCodeMatchResult[i]
+          ->optionToBool;
+        let qtyCheckResult = state.matchResult.orderQtyEaMatchResult[i];
+        let totalCheckResult = state.matchResult.payAmountTotalMatchResult[i];
+
         [|
-          {j|검수결과|j},
-          {j|품목체크|j},
-          {j|수량체크|j},
-          {j|단가체크|j},
-        |],
-      );
-    } else {
-      let idx = i - 1;
-      let articleCodeMatchResult =
-        state.matchResult.optionCodeToArticleCodeMatchResult[idx]
-        ->optionToBool;
-      let qtyCheckResult = state.matchResult.orderQtyEaMatchResult[idx];
-      let totalCheckResult = state.matchResult.payAmountTotalMatchResult[idx];
-      Belt.Array.concat(
-        row,
-        [|
+          row,
+          state.orderData.articleOptionColumn[i],
           boolToPassFail(
-            qtyCheckResult && totalCheckResult && articleCodeMatchResult,
+            articleCodeMatchResult && qtyCheckResult && totalCheckResult,
           ),
           boolToPassFail(articleCodeMatchResult),
           boolToPassFail(qtyCheckResult),
           boolToPassFail(totalCheckResult),
-        |],
-      );
-    }
+        |];
+      },
+    ),
   );
 };
