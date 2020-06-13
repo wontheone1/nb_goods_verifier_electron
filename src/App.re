@@ -7,17 +7,23 @@ let panes: array(Ui.Tab.pane) = [|
   {
     menuItem: {j|매칭실패품목보기|j},
     render: () =>
-      <Ui.Tab.Pane attached=false> "fail"->React.string </Ui.Tab.Pane>,
+      <Ui.Tab.Pane attached=false>
+        <ResultTable tabName="success" />
+      </Ui.Tab.Pane>,
   },
   {
     menuItem: {j|모두보기|j},
     render: () =>
-      <Ui.Tab.Pane attached=false> "all"->React.string </Ui.Tab.Pane>,
+      <Ui.Tab.Pane attached=false>
+        <ResultTable tabName="all" />
+      </Ui.Tab.Pane>,
   },
   {
     menuItem: {j|매칭성공품목보기|j},
     render: () =>
-      <Ui.Tab.Pane attached=false> "Success"->React.string </Ui.Tab.Pane>,
+      <Ui.Tab.Pane attached=false>
+        <ResultTable tabName="fail" />
+      </Ui.Tab.Pane>,
   },
 |];
 
