@@ -11,27 +11,26 @@ let make = (~tableContents: option(array(Model.column))) => {
         <Ui.Table.Row>
           {tableContents[0]
            ->Belt.Array.map(header => {
-               Js.log(header);
                <Ui.Table.HeaderCell key=header>
                  header->React.string
-               </Ui.Table.HeaderCell>;
+               </Ui.Table.HeaderCell>
              })
            ->React.array}
         </Ui.Table.Row>
       </Ui.Table.Header>
       <Ui.Table.Body>
         {Belt.Array.map(
-           Belt.Array.range(1, Belt.Array.length(tableContents) - 1), i =>
-           <Ui.Table.Row>
+           Belt.Array.range(1, Belt.Array.length(tableContents) - 1), i => {
+           <Ui.Table.Row key={string_of_int(i)}>
              {tableContents[i]
-              ->Belt.Array.map(cellContent => {
-                  <Ui.Table.Cell key=cellContent>
+              ->Belt.Array.mapWithIndex((i, cellContent) => {
+                  <Ui.Table.Cell key={string_of_int(i)}>
                     cellContent->React.string
                   </Ui.Table.Cell>
                 })
               ->React.array}
            </Ui.Table.Row>
-         )
+         })
          ->React.array}
       </Ui.Table.Body>
     </Ui.Table>
