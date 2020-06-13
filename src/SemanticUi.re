@@ -113,10 +113,10 @@ module Table = {
   [@bs.module "semantic-ui-react"] [@react.component]
   external make:
     (
-      ~children: React.element,
-      ~sortable: bool,
-      ~celled: bool,
-      ~fixed: bool,
+      ~children: React.element=?,
+      ~sortable: bool=?,
+      ~celled: bool=?,
+      ~fixed: bool=?,
       ~onClick: ReactEvent.Mouse.t => unit=?
     ) =>
     React.element =
@@ -126,7 +126,7 @@ module Table = {
     [@bs.module "semantic-ui-react"] [@bs.scope "Table"] [@react.component]
     external make:
       (
-        ~children: React.element,
+        ~children: React.element=?,
         ~sortable: bool=?,
         ~celled: bool=?,
         ~fixed: bool=?,
