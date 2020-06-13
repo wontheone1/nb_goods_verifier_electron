@@ -160,23 +160,45 @@ let make = () => {
     {
       menuItem: {j|매칭실패품목보기|j},
       render: () =>
-        <Ui.Tab.Pane attached=false>
-          <ResultTable tableContents={state.outputContents} />
-        </Ui.Tab.Pane>,
+        switch (state.outputContents) {
+        | Some(outputContents) =>
+          <Ui.Tab.Pane attached=false>
+            <ResultTable
+              tableContents={DataProcesser.filterOutputContentsByCheckResult(
+                outputContents,
+                Model.Fail,
+              )}
+            />
+          </Ui.Tab.Pane>
+        | None => ResultTable.noResult
+        },
     },
     {
       menuItem: {j|모두보기|j},
       render: () =>
-        <Ui.Tab.Pane attached=false>
-          <ResultTable tableContents={state.outputContents} />
-        </Ui.Tab.Pane>,
+        switch (state.outputContents) {
+        | Some(outputContents) =>
+          <Ui.Tab.Pane attached=false>
+            <ResultTable tableContents=outputContents />
+          </Ui.Tab.Pane>
+        | None => ResultTable.noResult
+        },
     },
     {
       menuItem: {j|매칭성공품목보기|j},
       render: () =>
-        <Ui.Tab.Pane attached=false>
-          <ResultTable tableContents={state.outputContents} />
-        </Ui.Tab.Pane>,
+        switch (state.outputContents) {
+        | Some(outputContents) =>
+          <Ui.Tab.Pane attached=false>
+            <ResultTable
+              tableContents={DataProcesser.filterOutputContentsByCheckResult(
+                outputContents,
+                Model.Pass,
+              )}
+            />
+          </Ui.Tab.Pane>
+        | None => ResultTable.noResult
+        },
     },
   |];
 

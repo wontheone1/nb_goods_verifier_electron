@@ -2,6 +2,10 @@ type column = array(string);
 type row = array(string);
 type intColumn = array(int);
 
+type result =
+  | Pass
+  | Fail;
+
 type orderData = {
   csvContents: array(column),
   optionManagementCodeColumn: column,

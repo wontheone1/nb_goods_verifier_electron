@@ -42,3 +42,16 @@ let makeOutputContents = (state: Model.state) => {
     ),
   );
 };
+
+let resultToPassFail =
+  fun
+  | Model.Fail => "FAIL"
+  | Model.Pass => "PASS";
+
+let filterOutputContentsByCheckResult =
+    (outputContents: array(array(string)), filter: Model.result) => {
+  let filter = resultToPassFail(filter);
+  Belt.Array.keepWithIndex(outputContents, (row, i) => {
+    row[2] == filter || i == 0
+  });
+};
