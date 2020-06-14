@@ -38,7 +38,7 @@ const stringify = require("csv-stringify/lib/sync");
 const iconv = require("iconv-lite");
 const XLSX = require("xlsx");
 
-export function openOrderCSVFile(setState) {
+export function openOrderCSVFile(setOrderData) {
   const filepaths = dialog.showOpenDialogSync({
     filters: [{ name: "CSV files", extensions: ["csv"] }],
     properties: ["openFile"],
@@ -58,7 +58,7 @@ export function openOrderCSVFile(setState) {
     bom: true,
   });
 
-  setState(ExternalDataProcesser.csvContentsToOrderDataState(csvContents));
+  setOrderData(ExternalDataProcesser.csvContentsToOrderDataState(csvContents));
 }
 
 export function openEcountExcelFile(setEcountData) {
