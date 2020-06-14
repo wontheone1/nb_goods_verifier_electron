@@ -24,20 +24,41 @@ export function csvContentsToOrderDataState(csvContents) {
     (columnName) => columnName === "주문품목 결제금액"
   );
 
+  const csvContentsWithOptionManagementCodeSplitted = csvContents.flatMap(
+    (record) => {
+      return record[optionManagementCodeIndex]
+        .split("/")
+        .map((optionManagementCode) => {
+          record[optionManagementCodeIndex] = optionManagementCode;
+          return record;
+        });
+    }
+  );
+
   const optionManagementCodeColumn = array.tail(
-    csvContents.map((record) => record[optionManagementCodeIndex])
+    csvContentsWithOptionManagementCodeSplitted.map(
+      (record) => record[optionManagementCodeIndex]
+    )
   );
   const orderArticleNameColumn = array.tail(
-    csvContents.map((record) => record[orderArticleNameIndex])
+    csvContentsWithOptionManagementCodeSplitted.map(
+      (record) => record[orderArticleNameIndex]
+    )
   );
   const articleOptionColumn = array.tail(
-    csvContents.map((record) => record[articleOptionIndex])
+    csvContentsWithOptionManagementCodeSplitted.map(
+      (record) => record[articleOptionIndex]
+    )
   );
   const orderArticleQtyColumn = array.tail(
-    csvContents.map((record) => record[orderArticleQtyIndex])
+    csvContentsWithOptionManagementCodeSplitted.map(
+      (record) => record[orderArticleQtyIndex]
+    )
   );
   const orderArticlePayAmountColumn = array.tail(
-    csvContents.map((record) => record[orderArticlePayAmountIndex])
+    csvContentsWithOptionManagementCodeSplitted.map(
+      (record) => record[orderArticlePayAmountIndex]
+    )
   );
 
   return {
