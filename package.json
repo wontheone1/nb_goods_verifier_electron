@@ -87,7 +87,7 @@
     "electron-hot-reload": "0.1.4",
     "electron-squirrel-startup": "1.0.0",
     "iconv-lite": "0.6.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "reason-react": "0.8.0",
